@@ -1,7 +1,10 @@
 package com.diya.productapi;
 
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/products")
@@ -32,5 +35,14 @@ public class ProductController {
     public String deleteProduct(@PathVariable Long id) {
         repository.deleteById(id);
         return "Product deleted successfully";
+    }
+
+    @GetMapping("/expensive")
+    public List<Product> getExpensiveProducts() {
+        return repository.findAll()
+                .stream()
+                .filter(p -> p.getPrice() > 500)
+                .sorted(Comparator.comparingDouble(Product::getPrice))
+                .collect(Collectors.toList());
     }
 }
